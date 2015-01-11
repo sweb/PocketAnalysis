@@ -1,0 +1,110 @@
+---
+title: "Exploring my pocket archive"
+date: "January, 2015"
+output: html_document
+---
+
+[Pocket](http://getpocket.com) offers [export functionality](https://getpocket.com/export) as an HTML-file. The resulting file is used as baseline for this analysis.
+```{r include=FALSE}
+require(XML)
+require(dplyr)
+require(lubridate)
+require(ggplot2)
+filePath <- 'C:/Users/florian.mueller/Dropbox/data_analysis/pocket_data/20150110_ril_export.html'
+```
+As a first step, the links to stored articles are retrieved by searching for \<a\> HTML elements and in particular their attributes:
+```{r}
+doc.html = htmlTreeParse(filePath, useInternal = TRUE)
+doc.text = xpathApply(doc.html, '//a', xmlAttrs)
+names(unlist(doc.text[1]))
+```
+We get three attributes:
+
+* href: The link
+* time_added: The timestamp, when the link was added to pocket
+* tags: Tags assigned to a link
+
+Since I do not use tags, I will concentrate on the first two attributes for the analysis. The provided link offers some potential for direct feature extraction. For example, the base domain is interesting in order to identify common sources for articles from the web.
+
+The base domains can be retrieved by using a Regular Expression on the list of links. First the href-attributes are selected (each third row) and afterwards matched:
+```{r}
+doc.flatlist <- unlist(doc.text)
+doc.length <- length(doc.flatlist)
+doc.rawLinks <- doc.flatlist[seq(1,924,3)]
+
+matches <- regexpr("([^\\.|/]+)\\.([a-z]+)/", doc.rawLinks, perl=TRUE)
+doc.domains <- regmatches(doc.rawLinks, matches)
+head(doc.domains)
+```
+The time attributes counts seconds, starting from 01.01.1970 and can be transformed into readable dates by using POSIX date formats:
+```{r}
+doc.rawTimeAdded <- doc.flatlist[seq(2,924,3)]
+doc.parsedTimeAdded <- lapply(lapply(doc.rawTimeAdded, as.integer), 
+                              function(x) as.POSIXct(x, origin="1970-01-01",tz = "GMT"))
+```
+For easier access, several time related features are extracted. All features are then stored in a single data frame:
+```{r}
+doc.df <- data.frame(doc.rawLinks,
+                     as.integer(doc.rawTimeAdded),
+                     doc.domains,
+                     sapply(doc.parsedTimeAdded, year), 
+                     sapply(doc.parsedTimeAdded, month),
+                     sapply(doc.parsedTimeAdded, week),
+                     sapply(doc.parsedTimeAdded, day),
+                     sapply(doc.parsedTimeAdded, wday),
+                     sapply(doc.parsedTimeAdded, hour))
+
+names(doc.df) <- c("Link", "Added.on", "Domain", "Year","Month","Week","Day","Weekday","Hour")
+```
+Frist of all, let's see how pocket was used by me. To this end, the number of articles are plotted, based on when they were added:
+
+```{r, echo=FALSE}
+ana.noOfArticles <- arrange(doc.df, Added.on) %>% 
+  mutate(Date = as.POSIXct(Added.on, origin="1970-01-01",tz = "GMT")) %>% 
+  select(Date) %>% 
+  cbind(1:nrow(doc.df))
+
+names(ana.noOfArticles) <- c("Date", "ArticleNumber")
+
+ggplot(ana.noOfArticles, aes(x=Date, y=ArticleNumber)) +
+  geom_point(shape=1) 
+```
+
+I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month apprears to be much larger:
+
+```{r, echo=FALSE}
+grouped_by_Year <- group_by(doc.df, Year, Month)
+summarize(grouped_by_Year, number = n()) %>% 
+  mutate(Year_Month = as.character(Year*100 + Month)) %>% 
+  ggplot(aes(x=Year_Month, y=number)) + geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle=90, vjust=0.5))
+```
+
+After stopping Pocket at the end of 2012, I utilzed it again in April 2014. However, the real start appreas to be in May. In fact, after starting to use pocket again, the usage in the second to fifth month (May 2014 to August 2014) is very high, followed by a reduced usage in the next four month (September 2014 to December 2014).
+
+In order to check, if the mode of usage changed, the most visited domains in 2012 and 2014 are compared:
+
+```{r, echo=FALSE}
+grouped_by_Year_Domain <- group_by(doc.df, Year, Domain)
+summarize(grouped_by_Year_Domain, number = n()) %>% 
+  arrange(desc(number)) %>% 
+  filter(Year == 2012, number > 1) %>% head(10) %>% 
+  ggplot(aes(x=Domain, y=number)) + 
+  geom_bar(stat="identity") + 
+  ggtitle("Top domains 2012") +
+  theme(axis.text.x = element_text(angle=45, vjust=0.5, size=12))
+```
+
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
+
+```{r, echo=FALSE}
+summarize(grouped_by_Year_Domain, number = n()) %>% 
+  arrange(desc(number)) %>% 
+  filter(Year == 2014, number > 1) %>% head(10) %>% 
+  ggplot(aes(x=Domain, y=number)) + 
+  geom_bar(stat="identity") + 
+  ggtitle("Top domains 2014") +
+  theme(axis.text.x = element_text(angle=45, vjust=0.5, size=12))
+```
+
+In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now wired.com. [Lifehacker](http://lifehacker.com) and [youtube](http://youtube.com) are still strong, followed by two newspapers, [Spiegel](http://spiegel.de) and [New York Times](http://nytimes.com).
