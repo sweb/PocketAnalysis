@@ -85,7 +85,7 @@ In order to check, if the mode of usage changed, the most visited domains in 201
 
 ![](pocket_data_files/figure-html/unnamed-chunk-8-1.png) 
 
-There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [S?ddeutsche](http://sueddeutsche.de), a German newspaper.
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
 
 ![](pocket_data_files/figure-html/unnamed-chunk-9-1.png) 
 

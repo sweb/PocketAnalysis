@@ -107,7 +107,7 @@ summarize(grouped_by_Year_Domain, number = n()) %>%
   theme(axis.text.x = element_text(angle=45, vjust=0.5, size=12))
 ```
 
-There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [S?ddeutsche](http://sueddeutsche.de), a German newspaper.
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
 
 ```{r, echo=FALSE}
 summarize(grouped_by_Year_Domain, number = n()) %>% 
