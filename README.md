@@ -1,7 +1,11 @@
 # Exploring my Pocket archive
 January, 2015  
 
-[Pocket](http://getpocket.com) offers [export functionality](https://getpocket.com/export) as an HTML-file. The resulting file is used as baseline for this analysis.
+Im am using [Pocket](http://getpocket.com) as my main bookmarking service to store articles I find on the web during the day and want to read later. After I used it constantly for more than half a year, I wanted to evaluate how I actually use Pocket and gain some insights into what kind of articles are of interest to me.
+
+### Retrieving the data
+
+Pocket offers [export functionality](https://getpocket.com/export) as an HTML-file. The resulting file is used as baseline for this analysis.
 
 As a first step, the links to stored articles are retrieved by searching for \<a\> HTML elements and in particular their attributes:
 
@@ -64,11 +68,14 @@ doc.df <- data.frame(doc.rawLinks,
 
 names(doc.df) <- c("Link", "Added.on", "Domain", "Year","Month","Week","Day","Weekday","Hour")
 ```
+
+### Analysis
+
 Frist of all, let's see how pocket was used by me. To this end, the number of articles are plotted, based on when they were added:
 
 ![](pocket_data_files/figure-html/unnamed-chunk-6-1.png) 
 
-I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month apprears to be much larger:
+I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012 at 24 stored articles. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed, resulting in a total number of 308 articles. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month apprears to be much larger:
 
 ![](pocket_data_files/figure-html/unnamed-chunk-7-1.png) 
 
@@ -78,7 +85,7 @@ In order to check, if the mode of usage changed, the most visited domains in 201
 
 ![](pocket_data_files/figure-html/unnamed-chunk-8-1.png) 
 
-There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [S?ddeutsche](http://sueddeutsche.de), a German newspaper.
 
 ![](pocket_data_files/figure-html/unnamed-chunk-9-1.png) 
 
@@ -91,4 +98,11 @@ Most of the wired articles were added in May to August, afterwards the number de
 
 ![](pocket_data_files/figure-html/unnamed-chunk-11-1.png) 
 
-After July, a notable decline in share can be noted, even though the share recovers in the following months until December, where the lowest share so far is achieved. This may indicate a shift in interests or a greater variety of sources.
+After July, a notable decline in share can be noted, even though the share recovers in the following months until December, where the lowest share so far is achieved. This may indicate a shift in interests or a greater variety of sources. Thus, the proportion of unique domains with only one article contributing to a month is checked as a next step.
+
+![](pocket_data_files/figure-html/unnamed-chunk-12-1.png) 
+
+It appears as if the proportion of single-article domains is rising, indicating a larger variety of sources. This observation is also backed by the following query, checking the number of articles per domain per month.
+
+![](pocket_data_files/figure-html/unnamed-chunk-13-1.png) 
+
