@@ -16,7 +16,7 @@ require(XML)
 require(dplyr)
 require(lubridate)
 require(ggplot2)
-filePath <- 'C:/Users/Florian/Dropbox/data_analysis/pocket_data/20150110_ril_export.html'
+filePath <- 'C:/Users/florian.mueller/Dropbox/data_analysis/pocket_data/20150110_ril_export.html'
 ```
 As a first step, the web links of stored articles are retrieved by searching for \<a\> HTML elements and in particular their attributes:
 ```{r}
@@ -116,7 +116,7 @@ summarize(grouped_by_Year_Domain, number = n()) %>%
   theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
-There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [YouTube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [YouTube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [SÃ¼ddeutsche](http://sueddeutsche.de), a German newspaper.
 
 ```{r, echo=FALSE}
 summarize(grouped_by_Year_Domain, number = n()) %>% 
@@ -131,7 +131,7 @@ summarize(grouped_by_Year_Domain, number = n()) %>%
   theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
-In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now [Wired](wired.com). [Lifehacker](http://lifehacker.com) and [youtube](http://youtube.com) are still strong, followed by two newspapers, [Spiegel](http://spiegel.de) and [New York Times](http://nytimes.com). In order to discover whether the top domains constantly contribute to the archive or whether there are certain months with a lot of consumption of a particular domain, the number of articles per month are plotted:
+In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now [Wired](wired.com). [Lifehacker](http://lifehacker.com) and [YouTube](http://youtube.com) are still strong, followed by [recode.net](http://recode.net) and [Spiegel Online](http://spiegel.de), a German magazine. In order to discover whether the top domains constantly contribute to the archive or whether there are certain months with a lot of consumption of a particular domain, the number of articles per month are plotted:
 
 ```{r, echo=FALSE}
 ana.baseDf <- mutate(doc.df, 
@@ -140,7 +140,7 @@ ana.baseDf <- mutate(doc.df,
 ana.baseDf %>% group_by(Domain, curr_month) %>% summarize(number = n()) %>%
   filter(Domain == "wired.com/" | Domain == "lifehacker.com/" | Domain == "sueddeutsche.de/" |
            Domain == "ted.com/" | Domain == "youtube.com/" | Domain == "spiegel.de/" |
-           Domain == "nytimes.com/", year(curr_month) == 2014) %>% 
+           Domain == "recode.net/", year(curr_month) == 2014) %>% 
   ggplot(aes(x=curr_month, y=number, colour = Domain)) + geom_line(size = 1.5) +
   ggtitle("Articles per month of top domains in 2014") +
   ggtitle("Number of articles added per weekday") +
@@ -155,7 +155,7 @@ Most of the wired.com articles were added in May to August, afterwards the numbe
 ana.baseDf %>% 
   mutate(inTopList = Domain %in% c("wired.com/", "lifehacker.com/", 
                                    "sueddeutsche.de/", "ted.com/", "youtube.com/", 
-                                   "spiegel.de/", "nytimes.com/")) %>%
+                                   "spiegel.de/", "recode.net/")) %>%
   filter(Year == 2014) %>%
   group_by(curr_month) %>%
   summarize(proportionInTopList = mean(inTopList)) %>%

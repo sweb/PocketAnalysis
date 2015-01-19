@@ -73,45 +73,45 @@ names(doc.df) <- c("Link", "Added.on", "Domain", "Year","Month","Week","Day","We
 
 First of all, let's see how pocket was used by me. To this end, the number of articles are plotted, based on when they were added:
 
-![](./pocket_data_files/figure-html/unnamed-chunk-6-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-6-1.png) 
 
 I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012 at 24 stored articles. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed, resulting in a total number of 308 articles. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month appears to be much larger:
 
-![](./pocket_data_files/figure-html/unnamed-chunk-7-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-7-1.png) 
 
 After stopping to use Pocket at the end of 2012, I gave it a shot again in April 2014. However, the real start appears to be in May. In fact, after starting to use pocket again, the usage in the second to fifth month (May 2014 to August 2014) is very high, followed by a reduced usage in the next four month (September 2014 to December 2014).
 
 In order to check, if the mode of usage changed, the most visited domains in 2012 and 2014 are compared:
 
-![](./pocket_data_files/figure-html/unnamed-chunk-8-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-8-1.png) 
 
 There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [YouTube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
 
-![](./pocket_data_files/figure-html/unnamed-chunk-9-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-9-1.png) 
 
-In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now [Wired](wired.com). [Lifehacker](http://lifehacker.com) and [youtube](http://youtube.com) are still strong, followed by two newspapers, [Spiegel](http://spiegel.de) and [New York Times](http://nytimes.com). In order to discover whether the top domains constantly contribute to the archive or whether there are certain months with a lot of consumption of a particular domain, the number of articles per month are plotted:
+In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now [Wired](wired.com). [Lifehacker](http://lifehacker.com) and [YouTube](http://youtube.com) are still strong, followed by [recode.net](http://recode.net) and [Spiegel Online](http://spiegel.de), a German magazine. In order to discover whether the top domains constantly contribute to the archive or whether there are certain months with a lot of consumption of a particular domain, the number of articles per month are plotted:
 
-![](./pocket_data_files/figure-html/unnamed-chunk-10-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-10-1.png) 
 
 Most of the wired.com articles were added in May to August, afterwards the number declines. Lifehacker articles are strong in May but decline afterwards rather quickly. YouTube appears to be somehow constant, since it does not display a decline but more of an on/off pattern. Let's see how much the identified top domains contribute to the total number of articles per month:
 
-![](./pocket_data_files/figure-html/unnamed-chunk-11-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-11-1.png) 
 
 After July, a notable decline in share can be noted, even though the share recovers in the following months until December, where the lowest share so far is achieved. This may indicate a shift in interests or a greater variety of sources. Thus, the proportion of unique domains with only one article contributing to a month is checked as a next step.
 
-![](./pocket_data_files/figure-html/unnamed-chunk-12-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-12-1.png) 
 
 It appears as if the proportion of single-article domains is rising, indicating a larger variety of sources. This observation is also backed by the following query, checking the number of articles per domain per month. Starting in July 2014, the number average number of articles per domain decreases, getting quite close to one article per domain in December 2014.
 
-![](./pocket_data_files/figure-html/unnamed-chunk-13-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-13-1.png) 
 
 After an extensive look into domains, some other starting points for further analysis are explored. The following plot displays the number of articles that were added on which weekday.
 
-![](./pocket_data_files/figure-html/unnamed-chunk-14-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-14-1.png) 
 
 Sunday is the weekday with the most while Tuesday is the weekday with the least articles added. Both differ a lot from the other days. The next plot displays the number of articles added during which hour of the day.
 
-![](./pocket_data_files/figure-html/unnamed-chunk-15-1.png) 
+![](pocket_data_files/figure-html/unnamed-chunk-15-1.png) 
 
 The time slot from 8 p.m. to 9 p.m. has by far the most added articles. Between midnight and 5 a.m. no articles are added.
 
