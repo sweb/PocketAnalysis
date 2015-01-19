@@ -1,12 +1,12 @@
 ---
-title: "Exploring my Pocket archive"
+title: "Exploring my Pocket archive using R"
 output:
   html_document:
     keep_md: yes
 date: "January, 2015"
 ---
 
-Im am using [Pocket](http://getpocket.com) as my main bookmarking service to store articles I find on the web during the day and want to read later. After I used it constantly for more than half a year, I wanted to evaluate how I actually use Pocket and gain some insights into what kind of articles are of interest to me. The file pocket_data.rmd in this Github-Repository contains all necessary calls, in case you want to use it as a starting point for your own analysis. Required packages are XML, dplyr, lubridate and ggplot2.
+I am using [Pocket](http://getpocket.com) as my main bookmarking service to store articles I find on the web during the day and want to read later. After I used it constantly for more than half a year, I wanted to evaluate how I actually use Pocket and gain some insights into what kind of articles are of interest to me. For this exploratory analysis I am going to use R. The file pocket_data.rmd in this [Github-Repository](https://github.com/sweb/PocketAnalysis) contains all necessary calls, in case you want to use it as a starting point for your own analysis. Required packages are XML, dplyr, lubridate and ggplot2. The code is clumsy at best, since I am just getting started on doing data analysis using R.
 
 ### Retrieving the data
 
@@ -16,9 +16,9 @@ require(XML)
 require(dplyr)
 require(lubridate)
 require(ggplot2)
-filePath <- 'C:/Users/florian.mueller/Dropbox/data_analysis/pocket_data/20150110_ril_export.html'
+filePath <- 'C:/Users/Florian/Dropbox/data_analysis/pocket_data/20150110_ril_export.html'
 ```
-As a first step, the weblinks of stored articles are retrieved by searching for \<a\> HTML elements and in particular their attributes:
+As a first step, the web links of stored articles are retrieved by searching for \<a\> HTML elements and in particular their attributes:
 ```{r}
 doc.html = htmlTreeParse(filePath, useInternal = TRUE)
 doc.text = xpathApply(doc.html, '//a', xmlAttrs)
@@ -27,7 +27,7 @@ names(unlist(doc.text[1]))
 We get three attributes:
 
 * href: The link
-* time_added: The timestamp, when the link was added to pocket
+* time_added: The time stamp, when the link was added to pocket
 * tags: Tags assigned to a link
 
 Since I do not use tags, I will concentrate on the first two attributes for the analysis. The provided link offers some potential for direct feature extraction. For example, the base domain is interesting in order to identify common sources for articles from the web.
@@ -65,7 +65,7 @@ names(doc.df) <- c("Link", "Added.on", "Domain", "Year","Month","Week","Day","We
 
 ### Analysis
 
-Frist of all, let's see how pocket was used by me. To this end, the number of articles are plotted, based on when they were added:
+First of all, let's see how pocket was used by me. To this end, the number of articles are plotted, based on when they were added:
 
 ```{r, echo=FALSE}
 ana.noOfArticles <- arrange(doc.df, Added.on) %>% 
@@ -77,10 +77,13 @@ names(ana.noOfArticles) <- c("Date", "ArticleNumber")
 
 ggplot(ana.noOfArticles, aes(x=Date, y=ArticleNumber)) +
   ggtitle("Archive size during usage") +
-  geom_point(shape=1) 
+  geom_point(shape=1) +
+  ylab("Total number of articles") +
+  xlab("Time") +
+  theme(panel.grid.minor.y=element_blank(), panel.grid.major.y=element_blank())
 ```
 
-I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012 at 24 stored articles. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed, resulting in a total number of 308 articles. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month apprears to be much larger:
+I started using Pocket in 2012 in a rather limited way, stopping at the end of 2012 at 24 stored articles. This stop continued until mid of 2014. At first, just a brief usage is visible. Then, the usage skyrocketed, resulting in a total number of 308 articles. One possible explanation could be that the mode of usage changed significantly comparing to the first usage in 2012, since the number of added articles per month appears to be much larger:
 
 ```{r, echo=FALSE}
 mutate(doc.df, 
@@ -88,11 +91,14 @@ mutate(doc.df,
                                origin = "00-01-01", zt = "GMT")) %>% 
   group_by(curr_month) %>% summarize(number = n()) %>% 
   ggplot(aes(x=curr_month, y=number)) + geom_bar(stat="identity") +
-  ggtitle("Number of articles per month")
+  ggtitle("Number of articles per month") +
+  ylab("Number of articles") +
+  xlab("Time") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 grouped_by_Year <- group_by(doc.df, Year, Month)
 ```
 
-After stopping to use Pocket at the end of 2012, I gave it a shot again in April 2014. However, the real start appreas to be in May. In fact, after starting to use pocket again, the usage in the second to fifth month (May 2014 to August 2014) is very high, followed by a reduced usage in the next four month (September 2014 to December 2014).
+After stopping to use Pocket at the end of 2012, I gave it a shot again in April 2014. However, the real start appears to be in May. In fact, after starting to use pocket again, the usage in the second to fifth month (May 2014 to August 2014) is very high, followed by a reduced usage in the next four month (September 2014 to December 2014).
 
 In order to check, if the mode of usage changed, the most visited domains in 2012 and 2014 are compared:
 
@@ -104,10 +110,13 @@ summarize(grouped_by_Year_Domain, number = n()) %>%
   ggplot(aes(x=Domain, y=number)) + 
   geom_bar(stat="identity") + 
   ggtitle("Top domains 2012") +
-  theme(axis.text.x = element_text(angle=45, vjust=0.5, size=12))
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1, size=12)) +
+  ylab("Number of articles") +
+  xlab("Domain") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
-There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [youtube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [SÃ¼ddeutsche](http://sueddeutsche.de), a German newspaper.
+There are only four domains in 2012 that contributed more than one article to my Pocket archive. The top domain is [Lifehacker](http://lifehacker.com), which incidentally lead me to use Pocket in the first place. Second place goes to [YouTube](http://youtube.com), followed by [ted.com](http://ted.com) as another video-resource and [Süddeutsche](http://sueddeutsche.de), a German newspaper.
 
 ```{r, echo=FALSE}
 summarize(grouped_by_Year_Domain, number = n()) %>% 
@@ -116,7 +125,10 @@ summarize(grouped_by_Year_Domain, number = n()) %>%
   ggplot(aes(x=Domain, y=number)) + 
   geom_bar(stat="identity") + 
   ggtitle("Top domains 2014") +
-  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1, size=12))
+  theme(axis.text.x = element_text(angle=45, vjust=1, hjust=1, size=12)) +
+  ylab("Number of articles") +
+  xlab("Domain") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
 In 2014 the variety of domains has changed, allowing a display of top 10 domains with more than one article contribution. The top contributor is now [Wired](wired.com). [Lifehacker](http://lifehacker.com) and [youtube](http://youtube.com) are still strong, followed by two newspapers, [Spiegel](http://spiegel.de) and [New York Times](http://nytimes.com). In order to discover whether the top domains constantly contribute to the archive or whether there are certain months with a lot of consumption of a particular domain, the number of articles per month are plotted:
@@ -130,10 +142,14 @@ ana.baseDf %>% group_by(Domain, curr_month) %>% summarize(number = n()) %>%
            Domain == "ted.com/" | Domain == "youtube.com/" | Domain == "spiegel.de/" |
            Domain == "nytimes.com/", year(curr_month) == 2014) %>% 
   ggplot(aes(x=curr_month, y=number, colour = Domain)) + geom_line(size = 1.5) +
-  ggtitle("Articles per month of top domains in 2014")
+  ggtitle("Articles per month of top domains in 2014") +
+  ggtitle("Number of articles added per weekday") +
+  ylab("Number of articles") +
+  xlab("Time") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
-Most of the wired.com articles were added in May to August, afterwards the number declines. Lifehacker articles are strong in May but decline afterwards rather quickly. Youtube appears to be somehow constant, since it does not display a decline but more of an on/off pattern. Let's see how much the identified top domains contribute to the total number of articles per month:
+Most of the wired.com articles were added in May to August, afterwards the number declines. Lifehacker articles are strong in May but decline afterwards rather quickly. YouTube appears to be somehow constant, since it does not display a decline but more of an on/off pattern. Let's see how much the identified top domains contribute to the total number of articles per month:
 
 ```{r, echo=FALSE}
 ana.baseDf %>% 
@@ -146,7 +162,10 @@ ana.baseDf %>%
   arrange(desc(proportionInTopList)) %>%
   ggplot(aes(x=curr_month, y=proportionInTopList)) +
   geom_bar(stat="identity") +
-  ggtitle("Proportion of top domains per month in 2014")
+  ggtitle("Proportion of top domains per month in 2014") +
+  ylab("Proportion") +
+  xlab("Time") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
 
 After July, a notable decline in share can be noted, even though the share recovers in the following months until December, where the lowest share so far is achieved. This may indicate a shift in interests or a greater variety of sources. Thus, the proportion of unique domains with only one article contributing to a month is checked as a next step.
@@ -160,7 +179,10 @@ ana.baseDf %>%
   summarize(new_number = mean(one_or_less)) %>%
   ggplot(aes(x=curr_month, y=new_number)) +
   ggtitle("Proportion of domains with only one article per month") +
-  geom_bar(stat="identity")
+  geom_bar(stat="identity") +
+  ylab("Number of articles") +
+  xlab("Time") +
+  theme(panel.grid.minor.x=element_blank(), panel.grid.major.x=element_blank())
 ```
 
 It appears as if the proportion of single-article domains is rising, indicating a larger variety of sources. This observation is also backed by the following query, checking the number of articles per domain per month. Starting in July 2014, the number average number of articles per domain decreases, getting quite close to one article per domain in December 2014.
@@ -172,17 +194,29 @@ ana.baseDf %>%
   mutate(number_of_articles = total  / number) %>%
   ggplot(aes(x=curr_month, y=number_of_articles)) +
   ggtitle("Average number of articles per domain") +
-  geom_bar(stat="identity")
+  geom_bar(stat="identity") +
+  ylab("Number of articles") +
+  xlab("Time") +
+  theme(panel.grid.minor.x=element_blank(), panel.grid.major.x=element_blank())
 ```
 
+After an extensive look into domains, some other starting points for further analysis are explored. The following plot displays the number of articles that were added on which weekday.
+
 ```{r, echo=FALSE}
-ana.baseDf %>% 
+ana.baseDf %>%
   group_by(Weekday) %>%   
   summarize(number = n()) %>%
   ggplot(aes(x=Weekday, y=number)) + 
   geom_bar(stat="identity") + 
-  ggtitle("Number of articles added per weekday")
+  ggtitle("Number of articles added per weekday") +
+  ylab("Number of articles") +
+  xlab("Weekday") +
+  scale_x_discrete(limits = 1:7, breaks=1:7, 
+                   labels=c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")) +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 ```
+
+Sunday is the weekday with the most while Tuesday is the weekday with the least articles added. Both differ a lot from the other days. The next plot displays the number of articles added during which hour of the day.
 
 ```{r, echo=FALSE}
 ana.baseDf %>% 
@@ -190,6 +224,18 @@ ana.baseDf %>%
   summarize(number = n()) %>%
   ggplot(aes(x=Hour, y=number)) + 
   geom_bar(stat="identity") + 
-  ggtitle("Number of articles added per hour")
+  ggtitle("Number of articles added per hour") +
+  ylab("Number of articles") +
+  theme(panel.grid.minor.x=element_blank(), panel.grid.major.x=element_blank())
 ```
 
+The time slot from 8 p.m. to 9 p.m. has by far the most added articles. Between midnight and 5 a.m. no articles are added.
+
+### Conclusion
+This is just a first glimpse into the available data provided by the archive export of Pocket. I was able to identify some points to follow up on:
+
+* The number of articles added per month spikes in May and July. Another observation shows that wired.com articles were extensively added in these month. As a next step one could check, whether the number of articles per month is more constant if wired.com articles are removed from counts.
+* The analysis of articles per weekdays indicates that articles are added more often on Sundays than on other weekdays. This could be caused by a single incident in which I went on some kind of bookmarking spree - looking at the observation above, probably on wired.com.
+* The insights into the content of articles are extremely limited. In the analysis, only the domain may indicate what kind of content was bookmarked. Possible starting points for further analysis could be the displayed name of the link, which was not retrieved for this analysis and the contents of linked articles.
+
+Besides continuing the analysis, it should be easy enough to create a simple dashboard, e.g. to get a monthly update of my current usage. However, additional information like the time an article was marked as read would help to get an angle on the consumption of bookmarked articles, not just the bookmarking behavior.
